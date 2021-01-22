@@ -1,0 +1,163 @@
+body {
+    margin: 0;
+}
+
+#docTitle {
+    font-family: mono45-headline, monospace;
+    font-weight: 500;
+    font-style: normal;   
+    font-size: 20px;
+    padding-top: 2vh;
+    padding-bottom: 2vh;
+    width: 100%;
+    color: #FF1E37;
+}
+
+#my_dataviz {
+    width: 90vw;
+    margin-right: auto;
+    margin-left: auto;
+    padding-top: 2vh;
+}
+
+#legendOuterWrapper {
+    width: 100vw;
+    /* display: flex; */
+    /* justify-content: center; */
+}
+
+#legendWrapper {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    flex-direction: row;
+    /* width: 80vw; */
+}
+
+.column {
+    width: 39%;
+}
+
+#col3 {
+    width: 19%;
+}
+
+.legendItem {
+    display: block;
+    overflow-wrap: break-word;
+    padding-bottom: 1vh;
+}
+
+.legendItem:nth-child(9) {
+    /* grid-column: 3;
+    grid-row: 1 / span 4; */
+    padding-bottom: 2vh;
+}
+
+.keyLabel {
+    font-family: mono45-headline, monospace;
+    font-weight: 500;
+    font-style: normal;
+    font-size: 12px;   
+}
+
+.smallLabel {
+    font-family: mono45-headline, monospace;
+    font-weight: 500;
+    font-style: normal;
+    font-size: 10px;
+    fill: lightgreen;
+    }
+
+.tick {
+    font-family: mono45-headline, monospace;
+    font-weight: 500;
+    font-style: normal;   
+}
+
+.toolTip {
+    font-family: mono45-headline, monospace;
+    font-weight: 500;
+    font-style: normal;
+    font-size: 12px;
+}
+
+h2 {
+    font-family: mono45-headline, monospace;
+    font-weight: 500;
+    font-style: normal; 
+    font-size: 16px;
+    margin-top: 0;
+    margin-bottom: 0;
+    opacity: inherit;
+}
+
+.bodyText {
+    font-family: sans-serif;
+    font-weight: 500;
+    font-style: normal; 
+    font-size: 18px;
+    line-height: 1.2em;
+    margin-top: 0;
+    margin-bottom: 0;
+    hyphens: auto;
+    font-family: mr-eaves-xl-sans-narrow,sans-serif;
+    font-weight: 400;
+    font-style: normal;
+    opacity: inherit;
+}
+
+.notesCell {
+    border-top: 1px solid black;
+    width: 39%;
+    order: 10;
+    align-self: flex-end;
+    margin-top: 1em;
+}
+
+.linksCell {
+    border-top: 1px solid black;
+    justify-self: flex-end;
+    width: 59.5%;
+    order: 11;
+    margin-top: 1em;
+}
+
+sup {
+    vertical-align: baseline;
+    position: relative;
+    top: -0.4em;
+  }
+
+ol {
+    padding-left: 16px;
+}
+
+#addendaHeader {
+    padding-top: 20px;
+}
+
+#headerText {
+    font-size: 20px;
+}
+
+@media only screen and (max-width: 800px) {
+    
+    .column, #col3, .notesCell, .linksCell, #docTitle {
+        width: 100%;
+    }
+
+    .linksCell {
+        border-top: none;
+    }
+          
+
+    #my_dataviz {
+        width: 98vw;
+    }
+
+    .notesCell {
+        grid-row: auto;
+    }
+
+}

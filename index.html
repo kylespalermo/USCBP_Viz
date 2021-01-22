@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+
+<head>
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="https://use.typekit.net/cqt4rlt.css">
+<script src = "textDefs.js"></script>
+</head>
+
+<!-- Load d3.js & color scale-->
+<script src="https://d3js.org/d3.v4.js"></script>
+<script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
+
+
+<!-- Create a div where the graph will take place -->
+<div id="my_dataviz"></div>
+
+<!-- this is the header and legend down at the bottom of the viz -->
+<div id = "legendOuterWrapper">
+  <div id = "legendWrapper">
+    <div id = "docTitle">
+      US Border Patrol Enforcement Actions and <nobr>Covid-19</nobr>.
+      <p class = "bodyText" id = "headerText" style = "color: black">Under the guise of public health, the US Border Patrol has largely abandoned its normal, already aggressive “Title 8” protocols (broken out as eight subcategories below) for apprehended extralegal migrants and asylum seekers, replacing them with a policy of summary deportation under “Title 42.”</p>
+    </div>
+    <div class = "column" id = "col1"></div>
+    <div class = "column" id = "col2"></div>
+    <div class = "column" id = "col3"></div>
+  </div>
+</div>
+
+
+<script>
+
+  // set the dimensions and margins of the graph
+  var margin = {totalHoriz: 100, totalVert: 50}, //left + right margin; & top + bottom
+      width = 900, //horizontal remaining space
+      height = 250, //vertical remaining space, 2/1 aspect ratio
+      columnGap = 40, //increment to place elements away from main chart
+      tabStop = 15; //increment for gaps between related objects, like legend squares and labels.
+  
+  // append the svg object to the body of the page
+  var svg = d3.select("#my_dataviz")
+    .append("svg")
+    .attr("viewBox", `0 0 ${(width + margin.totalHoriz)} ${(height + 25)}`)
+    .attr("id", "mainSVG")
+    .append("g")
+      ;
+
+  //create two groups for elements to make sure ordering is correct
+  svg.append("g").attr("id", "viz")
+  svg.append("g").attr("id", "axes") 
+
+  //load data
+  d3.csv("USCBP_MigrantOutcomes.csv", function(data) {  
+    var numero = 0;
+    var positionHolder;
+  
+    // List of groups = header of the csv files
+    var keys = data.columns.slice(1);
+  
+    // color palette
+    var colorBold = "#FF1E37";
+    var colorGrey = [
+      "#f2f2f2",
+      "#e6e6e6",
+      "#cccccc",
+      "#b3b3b3",
+      "#999999",
+      "#808080",
+      "#666666",
+      "#4d4d4d"
+    ]
+  
+    //stack the data
+    var stackedData = d3.stack()
+      .keys(keys)
+      (data)
+  
+    //////////////////////
+    // HIGHLIGHT GROUP //
+    /////////////////////
+  
+    // What to do when one group is hovered
+    var highlight = function(d, i){
+      // reduce opacity of all groups
+      d3.selectAll(".myArea").style("opacity", .1)
+      d3.selectAll(".legendItem").style("opacity", .1);
+      // except the one that is hovered
+      d3.select("." + d.key)
+        .style("opacity", 1)
+        .style("fill", colorBold)
+      document.getElementById(i+1).setAttribute("style", `color: ${colorBold}`) //change to red colorVar
+      }
+    
+    // And when it is not hovered anymore
+    var noHighlight = function(d, i){
+      d3.selectAll(".myArea").style("opacity", 1)
+      d3.selectAll(".legendItem").style("opacity", 1);
+      d3.selectAll(".myArea").style("fill", function (d, i) {
+        if (d.key == "Title42") { return colorBold } else { return colorGrey[i] }; })
+      document.getElementById(i+1).setAttribute("style", "color: auto");
+      }
+    
+    
+    //////////
+    // AXIS //
+    //////////
+  
+    // Add X axis
+    var maxMonth = d3.max(data, function(d) { return +d.month; } );
+
+    var x = d3.scaleLinear()
+      .domain(d3.extent(data, function(d) { return +d.month; }))
+      .range([0, width - margin.totalHoriz/2]);
+    
+    var xAxis = svg.select("#axes")
+      .append("g")
+        .attr("transform", "translate(" + (margin.totalHoriz/2) + "," + (height) + ")")
+        .call(d3.axisBottom(x).tickFormat(function(d, i){
+          return d + "/2020"
+        } ))
+
+  
+    //create total values for two main data categories and all data
+    //to be used in tooltip and for reference of totals in y axis labels
+    //this might be hacky but I was having a hard time referencing specific totals using built in d3 functions
+    var totalTitle8 = [];
+    var totalTitle42 = [];
+    var totalAll = [];
+    var totalTitle42PostMarch = 0;
+    var totalTitle8PostMarch = 0;
+
+    for (let i = 0; i < data.length; i++) { //sum the "Title 8" categories for each month and store in array
+      totalTitle8[i] = d3.sum([
+        data[i].ExpeditedRemoval,
+        data[i].PACRHARPACA,
+        data[i].NoticeToAppearOrderofRecognizanceReleased,
+        data[i].ReinstatementofPriorRemoval,
+        data[i].VoluntaryReturn,
+        data[i].WarrantNoticeToAppearNTADetained,
+        data[i].MPP1, 
+        data[i].Other, 
+      ])
+      totalTitle42[i] = data[i].Title42; //collect total "Title 42" numbers for each month and store in array
+      totalAll[i] = d3.sum([+totalTitle8[i] + +totalTitle42[i]]); //collect total disposition numbers for each month
+    }
+
+    //create totals that count march through data end
+    for (let i = 2; i < data.length; i++) {
+      totalTitle8PostMarch += (+totalTitle8[i]);
+      totalTitle42PostMarch += (+totalTitle42[i]);
+    }
+
+
+    //line indicating Title 42 order implementation
+    svg.selectAll("#axes")
+      .append("line")
+        .attr("transform", "translate(" + (margin.totalHoriz/2) + "," + (0) + ")")
+        .style("stroke", "lightgreen")
+        .style("stroke-width", 1)
+        .attr("x1", x(3))
+        .attr("y1", margin.totalVert/2)
+        .attr("x2", x(3))
+        .attr("y2", height)
+        .style("stroke-dasharray", ("3, 3"))
+
+    //cdc text annotation, sadly had to manually enter ugly translate numbers
+    //as implementing rotation was distorting the translation. Ideally could complete
+    //the same way as the line set above. Also, "y is not a function" issue
+    svg.selectAll("#axes")
+      .append("text")
+        .attr("x", x(3))
+        .attr("y", margin.totalVert/2)
+        .attr("class", "smallLabel")
+        .text("CDC order issued 3/20/2020")
+        .attr("transform", "rotate(-90) translate(-293, 195)")
+
+
+    //tooltip when hovering over x ticks
+    d3.selectAll('.tick') // gs for all ticks
+      .on("mouseover", function(d) {
+        numero = d-1;
+
+        //create green dotted line
+        svg.selectAll("#axes")
+          .append("line")
+            .attr("transform", "translate(" + (margin.totalHoriz/2) + "," + (0) + ")")
+            .attr("class", "toolTip")
+            .style("stroke", "lightgreen")
+            .style("stroke-dasharray", ("3, 3"))
+            .style("stroke-width", 1)
+            .attr("x1", x(d))
+            .attr("y1", y(0))
+            .attr("x2", x(d))
+            .attr("y2", y(+totalAll[numero])); 
+
+        //show total for title 8 in that month    
+        svg.selectAll("#axes")
+          .append("text")
+            .attr("text-anchor", "end")
+            .attr("transform", "translate(" + (margin.totalHoriz/2) + "," + (0) + ")")
+            .attr("class", "toolTip")
+            .text(function() { return formatComma(totalTitle8[numero])})
+            .attr("x", x(d)-2)
+            .attr("y", y(totalTitle8[numero]))
+
+        //show total for title 42 that month,     
+        svg.selectAll("#axes")  
+          .append("text")
+            .attr("text-anchor", "end")
+            .attr("transform", "translate(" + (margin.totalHoriz/2) + "," + (0) + ")")
+            .attr("class", "toolTip")
+            .attr("opacity", function(){
+              if (totalTitle42[numero] == 0) {
+                return "0" } else { return "1"}
+            })
+            .text(function() {return formatComma(totalTitle42[numero])})
+            .attr("x", x(d)-2)
+            .attr("y", y(totalAll[numero]))//but show title 42 number at top of stack, e.g. "totalAll"
+      })
+      
+    //delete the tooltip after mouseout
+    .on("mouseout", function() {
+      svg.selectAll(".toolTip")
+      .remove();
+      });
+      
+    //Add Y axis label:
+    svg.select("#axes")
+      .append("text")
+      .attr("text-anchor", "end")
+      .attr("x", margin.totalHoriz/2)
+      .attr("y", tabStop)
+      .attr("class", "keyLabel")
+      .text("migrant apprehensions")
+      .attr("text-anchor", "start")
+          
+    // Add Y axis
+    var maxDomain = Math.ceil(Math.max(...totalAll)/10000)*10000;
+
+    var y = d3.scaleLinear()
+      .domain([0, maxDomain]) //SHOULD CHANGE MAX TO D3MAX FUNCTION OF EACH DATA POINT
+      .range([ height, margin.totalVert/2 ]);
+      
+    svg.select("#axes")
+      .append("g") //var xAxis = svg.select("#axes")//
+      .attr("transform", "translate(" + (margin.totalHoriz/2) + "," + (0) + ")")
+      .call(d3.axisLeft(y).ticks(5))
+        
+
+    //////////
+    // CHART //
+    //////////
+
+    let transVar = false;
+  
+    // Add a clipPath: everything out of this area won't be drawn.
+    var clip = svg.select("#viz")
+        .append("defs").append("svg:clipPath")
+        .attr("id", "clip")
+        .append("svg:rect")
+        .attr("width", 0 )
+        .attr("height", height )
+        .attr("x", 0)
+        .attr("y", 0)
+        .transition()//expand the clip path from 0 to give the time-series effect
+          .ease(d3.easeLinear)
+          .duration(5000)
+          .attr("width", width)
+          .on("end", addAxisLabels )
+
+    // Create the chart container group
+    var areaChart = svg.select("#viz")
+      .append('g')
+        .attr("clip-path", "url(#clip)")
+        .attr("transform", "translate(" + `${margin.totalHoriz/2},0` + ")");
+    
+    // Generate the area variables
+    var area = d3.area()
+      .x(function(d) { return x(d.data.month); })
+      .y0(function(d) { return y(d[0]); })
+      .y1(function(d) { return y(d[1]); })
+
+    // Show the areas
+    areaChart
+      .selectAll("mylayers")
+      .data(stackedData)
+      .enter()
+      .append("path")
+        .attr("class", function(d) { return "myArea " + d.key })
+        .style("fill", function(d,i) { 
+          if (d.key == "Title42") {
+            return colorBold; } else {return  colorGrey[i] 
+            }; })
+        .attr("d", area)
+        .on("mouseover", highlight)
+        .on("mouseleave", noHighlight);
+
+        var formatComma = d3.format(",");        
+
+
+    //this function adds the labels on the right side of the graph
+    //that adds the totals for post-March and related text
+    //very repetitive but having difficulty getting the typography right
+    //so basically the repetive blocks are all to create three seperate lines
+    //for each label, so six total.    
+    function addAxisLabels(){      
+
+      //title 42 label first line
+      svg.selectAll("#axes")
+        .data(stackedData.filter(function(d) {return d.key == "Title42"} ))
+        .append("text")
+          .attr("opacity", 0)
+          .attr("class", "keyLabel")
+          .text("Title 42")
+          .attr("transform", function(d) {
+            return "translate(" + width + "," + y(d[d.length-1][1]) + ")"
+            })
+          .transition()
+            .ease(d3.easeLinear)
+            .duration(500)
+            .attr("opacity", 1)
+
+      //title 42 label digits (2nd line)
+      svg.selectAll("#axes")
+        .data(stackedData.filter(function(d) {return d.key == "Title42"} ))
+        .append("text")
+          .attr("transform", function(d) {
+                  return "translate(" + width + "," + (y(d[d.length-1][1]) + (tabStop)) + ")"
+              })
+          .attr("opacity", 0)
+          .attr("class", "keyLabel")
+          .text(function(d) { return "total: " + formatComma(totalTitle42PostMarch) } )
+          .transition()
+            .ease(d3.easeLinear)
+            .duration(500)
+            .attr("opacity", 1)
+
+      //title 42 label third line        
+      svg.selectAll("#axes")
+        .data(stackedData.filter(function(d) {return d.key == "Title42"} ))
+        .append("text")
+          .attr("opacity", 0)
+          .attr("class", "keyLabel")
+          .text("(3/2020-12/2020)")
+          .attr("transform", function(d) {
+                  return "translate(" + width + "," + (y(d[d.length-1][1]) + tabStop*2) + ")"
+              })
+            .transition()
+              .ease(d3.easeLinear)
+              .duration(500)
+              .attr("opacity", 1)
+
+      //title 8 label
+      svg.selectAll("#axes")      
+        .append("text")
+          .attr("class", "keyLabel")
+          .attr("transform", "translate(" + width + "," + y(totalTitle8[totalTitle8.length-1]) + ")")
+          .attr("opactiy", 0)
+          .text("Title 8")
+          .transition()
+            .ease(d3.easeLinear)
+            .duration(500)
+            .attr("opacity", 1)
+
+      //title 8 label digits (second line)
+      svg.selectAll("#axes")
+        .data(stackedData.filter(function(d) {return d.key == "Title42"} ))
+        .append("text")
+          .attr("opacity", 0)
+          .attr("class", "keyLabel")
+          .text("(3/2020-12/2020)")
+          .attr("transform", function(d) {
+                  return "translate(" + width + "," + (y(totalTitle8[totalTitle8.length-1]) + tabStop) + ")"
+              })
+            .transition()
+              .ease(d3.easeLinear)
+              .duration(500)
+              .attr("opacity", 1)
+
+      //title 8 label (third line)
+      svg.selectAll("#axes")
+        .append("text")
+          .attr("transform", function(d) {
+                  return "translate(" + width + "," + (y(totalTitle8[totalTitle8.length-1]) + tabStop*2) + ")"
+              })
+          .attr("opacity", 0)
+          .attr("class", "keyLabel")
+          .text(function(d) { return "total: " + formatComma(totalTitle8PostMarch) } )   
+          .transition()
+            .ease(d3.easeLinear)
+            .duration(500)
+            .attr("opacity", 1)     
+      }
+
+    //set the legendWrapper to equal the width of the areas/main chart components
+    function getVizWidth() {
+      var node = document.getElementById("legendWrapper")
+      var gDimensions = document.getElementById("viz").getBoundingClientRect();
+      var wrapWidth = document.getElementById("mainSVG").getBoundingClientRect().width;
+      node.setAttribute("style", `width: ${gDimensions.width}` + "px; " + `padding-left: ${gDimensions.x}` + "px;");
+    }
+
+    //run that function once upfront and again on every window rezise, keeping legend width same as 
+    getVizWidth();
+    window.addEventListener("resize", getVizWidth);
+
+    //create the legend underneath the viz
+    //created with vanilla js b/c having trouble getting things to nest properly w/ d3 append
+
+    //these create three column layout for flexbox
+    //flexbox instead of CSS grid to avoid weird row height with different text lengths
+    var node1 = document.getElementById("col1");
+    var node2 = document.getElementById("col2");
+    var node3 = document.getElementById("col3");
+
+    for (let i = 0; i < keys.length; i++) {
+      var legendEntry = document.createElement("DIV"); //create a div for each legend item
+
+      if (i < 4) { //place first 4 entries in 1st column
+      node1.appendChild(legendEntry)
+      } else if (i > 3 && i < 8) { //place next 4 in 2nd column
+        node2.appendChild(legendEntry)
+      } else if ( i == 8) { //and last entry in its own column
+        node3.appendChild(legendEntry)
+      }
+
+      legendEntry.setAttribute("Class", "legendItem") 
+      legendEntry.setAttribute("ID", i+1) //so we can reference it with the highlight function
+      legendEntry.innerHTML = textDefs[i] //grab the text 
+    }
+
+    //create the notes at the bottom of the legend
+    var notes = document.createElement("DIV")
+    document.getElementById("legendWrapper").appendChild(notes)
+    notes.setAttribute("Class", "notesCell")
+    notes.innerHTML = references;
+
+    //create the links entry at the bottom of the legend
+    var links = document.createElement("DIV")
+    document.getElementById("legendWrapper").appendChild(links)
+    links.setAttribute("Class", "linksCell");
+    links.innerHTML = linksText; //why is this only giving you the first element?
+
+    //and add the highlight function for mouseover/mouselave for each legend item
+    var thisNode = d3.select("#legendOuterWrapper")    
+    thisNode.select("#legendWrapper").selectAll(".legendItem")
+      .data(stackedData)
+      .on("mouseover", highlight)
+      .on("mouseleave", noHighlight);    
+      });
+
+</script>
