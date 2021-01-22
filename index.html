@@ -11,6 +11,7 @@
 <script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
 
 
+<div id = "nameHeader"><a href="https://www.kylepalermo.com/">Kyle Palermo</a></div>
 <!-- Create a div where the graph will take place -->
 <div id="my_dataviz"></div>
 
@@ -362,26 +363,11 @@
             .duration(500)
             .attr("opacity", 1)
 
-      //title 8 label digits (second line)
+      //title 8 second line      
       svg.selectAll("#axes")
-        .data(stackedData.filter(function(d) {return d.key == "Title42"} ))
         .append("text")
-          .attr("opacity", 0)
-          .attr("class", "keyLabel")
-          .text("(3/2020-12/2020)")
           .attr("transform", function(d) {
                   return "translate(" + width + "," + (y(totalTitle8[totalTitle8.length-1]) + tabStop) + ")"
-              })
-            .transition()
-              .ease(d3.easeLinear)
-              .duration(500)
-              .attr("opacity", 1)
-
-      //title 8 label (third line)
-      svg.selectAll("#axes")
-        .append("text")
-          .attr("transform", function(d) {
-                  return "translate(" + width + "," + (y(totalTitle8[totalTitle8.length-1]) + tabStop*2) + ")"
               })
           .attr("opacity", 0)
           .attr("class", "keyLabel")
@@ -390,6 +376,21 @@
             .ease(d3.easeLinear)
             .duration(500)
             .attr("opacity", 1)     
+
+
+      //title 8 label (third line)
+      svg.selectAll("#axes")
+        .append("text")
+          .attr("opacity", 0)
+          .attr("class", "keyLabel")
+          .text("(3/2020-12/2020)")
+          .attr("transform", function(d) {
+                  return "translate(" + width + "," + (y(totalTitle8[totalTitle8.length-1]) + tabStop*2) + ")"
+              })
+            .transition()
+              .ease(d3.easeLinear)
+              .duration(500)
+              .attr("opacity", 1)
       }
 
     //set the legendWrapper to equal the width of the areas/main chart components

@@ -2,13 +2,13 @@ var textDefs = [
 
 //1
 `<h2>Expedited Removal</h2>
-<p class="bodyText">Individuals who present improper or fraudulent documents for entry or meet certain other criteria are deportated without an immigration hearing.<sup>[1]<sup></p>
+<p class="bodyText">Individuals who present improper or fraudulent documents for entry or meet certain other criteria are deported without an immigration hearing.<sup>[1]<sup></p>
 `,
 //2
 `
 <h2>PACR/HARP/ACA</h2>
-<p class="bodyText"><em>PACR (Prompt Asylum Review Process): </em>Pathway to &ldquo;promptly address credible fear claims.&rdquo;<sup>[2]</sup> <em>HARP (Humanitarian Asylum Review Process): </em>&ldquo;Address[es] credible fear claims of amenable Mexican
-        nationals.<sup>[3]</sup> <em>ACA (Asylum Cooperation Agreement): </em> migrants are deported to a northern
+<p class="bodyText"><em>PACR (Prompt Asylum Review Process):</em> Pathway to &ldquo;promptly address credible fear claims.&rdquo;<sup>[2]</sup> <em>HARP (Humanitarian Asylum Review Process): </em>&ldquo;Promptly address[es] credible fear claims of amenable Mexican
+        nationals.&rdquo;<sup>[3]</sup> <em>ACA (Asylum Cooperation Agreement): </em> migrants are deported to a northern
         triangle country where they can allegedly seek asylum instead.<sup>[4]</sup></p>
 `,
 //3
@@ -29,7 +29,7 @@ var textDefs = [
 //6
 `
 <h2>Warrant/Notice to Appear (NTA) - Detained</h2>
-<p class="bodyText">Individuals issued a notice to appear and held in custody pending appearance before
+<p class="bodyText">Individuals issued a notice to appear and held in custody pending appearance before an
         immigration judge.<sup>[8]</sup></p>
 `,
 //7
@@ -58,7 +58,7 @@ var textDefs = [
 var references = 
 `
 <h2 id = "addendaHeader">Notes</h2>
-<p class = "bodyText">My annotated data is <a href="https://docs.google.com/spreadsheets/d/1Xnqg5F6sxaJX70f9Cl5GXqqNBaXNqmI0iHC1bHsZVsc/edit?usp=sharing">here.</a><br><br></p>
+<p class = "bodyText">Kyle Palermo, 2021. More work at <a href="https://www.kylepalermo.com/">kylepalermo.com</a>. You can find my annotated data <a href="https://docs.google.com/spreadsheets/d/1Xnqg5F6sxaJX70f9Cl5GXqqNBaXNqmI0iHC1bHsZVsc/edit?usp=sharing">here</a>. Github repo is <a href="https://github.com/kylespalermo/USCBP_Viz">here</a>.<br><br></p>
 <ol class = "bodyText">
     <li>DHS, &ldquo;<a
                 href="https://www.google.com/url?q=https://www.dhs.gov/sites/default/files/publications/immigration-statistics/yearbook/2019/enforcement_actions_2019.pdf&amp;sa=D&amp;ust=1611177012119000&amp;usg=AOvVaw3MIadyyn2fSb6pSVU3-Xd_">Immigration
@@ -66,13 +66,13 @@ var references =
     <li>US CBP, &ldquo;<a
                 href="https://www.google.com/url?q=https://www.cbp.gov/newsroom/stats/custody-and-transfer-statistics&amp;sa=D&amp;ust=1611177012119000&amp;usg=AOvVaw36SgCIlG1Q7Bg_F5Iriocf">Custody
                 and Transfer Statistics FY2021</a>.&rdquo;</li>
-    <li>ibid</li>
+    <li>ibid.</li>
     <li>DHS, &ldquo;<a
                 href="https://www.google.com/url?q=https://www.dhs.gov/news/2020/12/15/el-salvador-begins-implementation-asylum-cooperative-agreement&amp;sa=D&amp;ust=1611177012120000&amp;usg=AOvVaw2nOutvt0l7bynwXPfE8vec">El
                 Salvador Begins Implementation of Asylum Cooperative Agreement</a>.&rdquo;</li>
     <li>DHS, &ldquo;<a
                 href="https://www.google.com/url?q=https://www.dhs.gov/sites/default/files/publications/immigration-statistics/yearbook/2019/enforcement_actions_2019.pdf&amp;sa=D&amp;ust=1611177012120000&amp;usg=AOvVaw3n1cRw3vYiBb9m1SfeyZ8W">Immigration
-                Enforcement Actions: 2019</a>,&rdquo; page 1.</li>
+                Enforcement Actions: 2019</a>,&rdquo; page 2.</li>
     <li>ibid, page 3.</li>
     <li>ibid, page 2.</li>
     <li>ibid, page 1.</li>
@@ -97,7 +97,7 @@ var linksText =
 `
 <h2 id = "addendaHeader">Links</h2>
 <p class = "bodyText">Kevin Sieff, “<a href = "https://www.thisamericanlife.org/721/the-walls-close-in/act-one-18">The People Up the Stairs</a>.” <em>This American Life</em> episode 721.<br>
-Molly O’Toole, “<a href = "https://www.latimes.com/politics/story/2021-01-20/trump-immigration-border-wall-issues-test-biden-policies">Biden inherits border chaos from Trump but begets uncertainty and false hope</a>.” <em>Los Angeles Times</em>.<br>
+Molly O’Toole, “<a href = "https://www.latimes.com/politics/story/2021-01-20/trump-immigration-border-wall-issues-test-biden-policies">Biden inherits border chaos from Trump, but for now his next steps are uncertain</a>.” <em>Los Angeles Times</em>.<br>
 Human Rights Watch, “<a href="https://www.hrw.org/news/2021/01/14/hrw-letter-biden-transition-team#_ftn10HRW">Letter to the Biden Transition Team Regarding Ensuring Humanitarian Border Reception</a>.”<br>
 </p>
 `
