@@ -96,7 +96,7 @@
     var highlight = function(d, i){
       // reduce opacity of all groups
       d3.selectAll(".myArea").style("opacity", .1)
-      d3.selectAll(".legendItem").style("opacity", .1);
+      d3.selectAll(".legendItem").style("opacity", .4);
       // except the one that is hovered
       d3.select("." + d.key)
         .style("opacity", 1)
