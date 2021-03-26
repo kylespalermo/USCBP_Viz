@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 
 <head>
-
   <!-- Global site tag (gtag.js) - Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-BM0MGRT7BF"></script>
 <script>
@@ -22,12 +21,13 @@
 <script src="https://d3js.org/d3.v4.js"></script>
 <script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
 
-
+<div id = "outerWrapper">
 <div id = "nameHeader"><a href="https://www.kylepalermo.com/">Kyle Palermo</a></div>
 <!-- Create a div where the graph will take place -->
 <div id="my_dataviz"></div>
 
 <!-- this is the header and legend down at the bottom of the viz -->
+
 <div id = "legendOuterWrapper">
   <div id = "legendWrapper">
     <div id = "docTitle">
@@ -39,7 +39,8 @@
     <div class = "column" id = "col3"></div>
   </div>
 </div>
-
+</div>
+<div id = "notes-linksWrapper"></div>
 
 <script>
 
@@ -408,9 +409,12 @@
     //set the legendWrapper to equal the width of the areas/main chart components
     function getVizWidth() {
       var node = document.getElementById("legendWrapper")
+      var node2 = document.getElementById("notes-linksWrapper")
       var gDimensions = document.getElementById("viz").getBoundingClientRect();
       var wrapWidth = document.getElementById("mainSVG").getBoundingClientRect().width;
       node.setAttribute("style", `width: ${gDimensions.width}` + "px; " + `padding-left: ${gDimensions.x}` + "px;");
+      node2.setAttribute("style", `width: ${gDimensions.width}` + "px; " + `padding-left: ${gDimensions.x}` + "px;");
+
     }
 
     //run that function once upfront and again on every window rezise, keeping legend width same as 
@@ -444,13 +448,13 @@
 
     //create the notes at the bottom of the legend
     var notes = document.createElement("DIV")
-    document.getElementById("legendWrapper").appendChild(notes)
+    document.getElementById("notes-linksWrapper").appendChild(notes)
     notes.setAttribute("Class", "notesCell")
     notes.innerHTML = references;
 
     //create the links entry at the bottom of the legend
     var links = document.createElement("DIV")
-    document.getElementById("legendWrapper").appendChild(links)
+    document.getElementById("notes-linksWrapper").appendChild(links)
     links.setAttribute("Class", "linksCell");
     links.innerHTML = linksText; //why is this only giving you the first element?
 
