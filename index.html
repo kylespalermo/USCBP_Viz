@@ -83,6 +83,10 @@
       "#666666",
       "#4d4d4d"
     ]
+
+    // var months = [
+    //   "1/2020"
+    // ]
   
     //stack the data
     var stackedData = d3.stack()
@@ -129,8 +133,12 @@
     var xAxis = svg.select("#axes")
       .append("g")
         .attr("transform", "translate(" + (margin.totalHoriz/2) + "," + (height) + ")")
-        .call(d3.axisBottom(x).tickFormat(function(d, i){
-          return d + "/2020"
+        .call(d3.axisBottom(x).tickFormat(function(d){
+          if (d < 13) {
+            return d + "/2020" }
+            else {
+              return d-12 + "/2021"
+            }
         } ))
 
   
